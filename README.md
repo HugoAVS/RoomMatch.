@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Rommatch
 
 Rommatch conecta estudiantes y profesionales con compañeros de vivienda
@@ -36,3 +37,7 @@ cd frontend
 npm install
 npm run dev
 ```
+=======
+# RoomMatch.
+# RoomMatch.
+>>>>>>> 16a85d57f83b8404095a57e5ce8e52bc14b4b348
