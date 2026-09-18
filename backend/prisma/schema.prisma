@@ -1,0 +1,39 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  ROOMMATE_SEEKER
+  LANDLORD
+}
+
+model User {
+  id         String     @id @default(uuid())
+  email      String     @unique
+  fullName   String
+  role       UserRole   @default(ROOMMATE_SEEKER)
+  createdAt  DateTime   @default(now())
+  updatedAt  DateTime   @updatedAt
+  properties Property[]
+
+  @@map("users")
+}
+
+model Property {
+  id          String   @id @default(uuid())
+  title       String
+  description String
+  price       Float
+  city        String
+  landlord    User     @relation(fields: [landlordId], references: [id])
+  landlordId  String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("properties")
+}
