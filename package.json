@@ -1,0 +1,12 @@
+{
+  "name": "roommatch",
+  "private": true,
+  "description": "RoomMatch — monorepo (frontend PWA + backend API). Este package.json solo orquesta el despliegue.",
+  "engines": {
+    "node": ">=20.0.0 <25"
+  },
+  "scripts": {
+    "build": "npm ci --include=dev --prefix frontend && npm run build --prefix frontend && npm ci --include=dev --prefix backend && npm run build --prefix backend",
+    "start": "npm run start:prod --prefix backend"
+  }
+}

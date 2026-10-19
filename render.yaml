@@ -1,0 +1,46 @@
+# Blueprint de Render: crea la base de datos y el servicio web de una sola vez.
+# Documentación: https://render.com/docs/blueprint-spec
+#
+# Un solo servicio sirve las dos cosas: la API (/api/...) y la aplicación ya
+# compilada (el resto de las rutas). Así la app y la API comparten origen: no hay
+# CORS que configurar, y el Service Worker puede guardar las respuestas de la API.
+
+databases:
+  - name: roommatch-db
+    databaseName: roommatch
+    user: roommatch
+    plan: free
+    # Vacío = nadie desde internet puede conectarse a la base de datos. El
+    # servicio web sí puede, porque se conecta por la red interna de Render.
+    ipAllowList: []
+
+services:
+  - type: web
+    name: roommatch-pwa
+    runtime: node
+    plan: free
+
+    # `npm run build` y `npm start` están definidos en el package.json de la raíz.
+    # La versión de Node se fija en el archivo .node-version.
+    buildCommand: npm run build
+    startCommand: npm start
+
+    # Responde sin consultar la base de datos: solo dice "el proceso está vivo".
+    healthCheckPath: /health
+    autoDeployTrigger: commit
+
+    envVars:
+      # La conexión a la base de datos la entrega Render; no se escribe a mano.
+      - key: DATABASE_URL
+        fromDatabase:
+          name: roommatch-db
+          property: connectionString
+      - key: NODE_ENV
+        value: production
+      # El backend también sirve el frontend compilado (frontend/dist).
+      - key: SERVE_FRONTEND
+        value: "true"
+      # La base de datos nace vacía: al primer arranque se crean los datos de
+      # demostración (usuario demo, candidatos, arriendos). Si ya hay datos, no toca nada.
+      - key: AUTO_SEED
+        value: "true"
