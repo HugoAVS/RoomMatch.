@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sin conexión · RoomMatch</title>
+    <meta name="theme-color" content="#164E63" />
+    <style>
+      :root { --petroleo: #164e63; --menta: #2dd4bf; --gris: #334155; }
+      * { box-sizing: border-box; }
+      body {
+        margin: 0; min-height: 100vh;
+        display: flex; align-items: center; justify-content: center;
+        padding: 2rem; text-align: center;
+        font-family: Inter, system-ui, -apple-system, sans-serif;
+        background: #f8fafc; color: var(--gris);
+      }
+      .icono {
+        width: 72px; height: 72px; margin: 0 auto 1.5rem;
+        display: flex; align-items: center; justify-content: center;
+        background: var(--petroleo); border-radius: 50%;
+        font-size: 2rem; color: var(--menta);
+      }
+      h1 { font-size: 1.35rem; color: var(--petroleo); margin: 0 0 .5rem; }
+      p { margin: 0 0 1.75rem; font-size: .95rem; line-height: 1.6; max-width: 28rem; }
+      button {
+        background: var(--petroleo); color: #fff; border: none;
+        border-radius: 999px; padding: .85rem 2rem;
+        font-family: inherit; font-size: .9rem; font-weight: 600; cursor: pointer;
+      }
+      button:hover { opacity: .9; }
+    </style>
+  </head>
+  <body>
+    <div>
+      <div class="icono">📡</div>
+      <h1>Sin conexión</h1>
+      <p>
+        No pudimos cargar esta parte de RoomMatch. Lo que ya habías visto sigue
+        disponible, y tus decisiones se guardaron: se enviarán solas cuando
+        vuelva el internet.
+      </p>
+      <button onclick="location.reload()">Reintentar</button>
+    </div>
+  </body>
+</html>
