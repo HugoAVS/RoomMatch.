@@ -1,0 +1,28 @@
+# Dependencias
+node_modules/
+
+# Compilados
+dist/
+build/
+*.tsbuildinfo
+
+# Variables de entorno (credenciales) — se versiona solo .env.example
+.env
+.env.local
+.env.*.local
+
+# Logs
+*.log
+npm-debug.log*
+
+# Sistema operativo / editores
+.DS_Store
+.vscode/*
+!.vscode/extensions.json
+.idea/
+
+# Prisma
+backend/prisma/*.db
+
+# Configuración local de herramientas de desarrollo
+.claude/
