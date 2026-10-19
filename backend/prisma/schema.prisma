@@ -12,28 +12,110 @@ enum UserRole {
   LANDLORD
 }
 
+/// Preferencias de convivencia: son la base del cálculo de compatibilidad.
+enum Horario {
+  MADRUGADOR
+  NOCTURNO
+  FLEXIBLE
+}
+
+enum NivelOrden {
+  RELAJADO
+  NORMAL
+  MUY_ORDENADO
+}
+
+enum Sociabilidad {
+  CASERO
+  EQUILIBRADO
+  SOCIAL
+}
+
+enum Decision {
+  LIKE
+  PASS
+}
+
 model User {
-  id         String     @id @default(uuid())
-  email      String     @unique
-  fullName   String
-  role       UserRole   @default(ROOMMATE_SEEKER)
-  createdAt  DateTime   @default(now())
-  updatedAt  DateTime   @updatedAt
-  properties Property[]
+  id       String   @id @default(uuid())
+  email    String   @unique
+  fullName String
+  role     UserRole @default(ROOMMATE_SEEKER)
+
+  // Perfil
+  edad      Int    @default(20)
+  ciudad    String @default("Tunja")
+  bio       String @default("")
+  ocupacion String @default("")
+  avatar    String @default("🙂") // emoji: evita depender de imágenes externas
+
+  // Preferencias de convivencia
+  presupuesto  Int          @default(600000)
+  horario      Horario      @default(FLEXIBLE)
+  orden        NivelOrden   @default(NORMAL)
+  sociabilidad Sociabilidad @default(EQUILIBRADO)
+  fumador      Boolean      @default(false)
+  mascotas     Boolean      @default(false)
+  intereses    String[]     @default([])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  properties      Property[]
+  swipesEnviados  Swipe[]    @relation("SwipesEnviados")
+  swipesRecibidos Swipe[]    @relation("SwipesRecibidos")
+  matchesComoA    Match[]    @relation("MatchUsuarioA")
+  matchesComoB    Match[]    @relation("MatchUsuarioB")
 
   @@map("users")
 }
 
 model Property {
-  id          String   @id @default(uuid())
-  title       String
-  description String
-  price       Float
-  city        String
-  landlord    User     @relation(fields: [landlordId], references: [id])
-  landlordId  String
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id           String   @id @default(uuid())
+  title        String
+  description  String
+  price        Int
+  city         String
+  barrio       String   @default("")
+  habitaciones Int      @default(1)
+  banos        Int      @default(1)
+  amoblado     Boolean  @default(false)
+  servicios    String[] @default([])
+  emoji        String   @default("🏠")
+  landlord     User     @relation(fields: [landlordId], references: [id])
+  landlordId   String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
 
   @@map("properties")
+}
+
+/// Cada vez que alguien acepta o descarta a otro usuario.
+/// La pareja (autor, objetivo) es única: no se puede votar dos veces.
+model Swipe {
+  id         String   @id @default(uuid())
+  autor      User     @relation("SwipesEnviados", fields: [autorId], references: [id], onDelete: Cascade)
+  autorId    String
+  objetivo   User     @relation("SwipesRecibidos", fields: [objetivoId], references: [id], onDelete: Cascade)
+  objetivoId String
+  decision   Decision
+  createdAt  DateTime @default(now())
+
+  @@unique([autorId, objetivoId])
+  @@map("swipes")
+}
+
+/// Se crea cuando dos usuarios se dan LIKE mutuamente.
+/// Se guarda siempre con usuarioAId < usuarioBId para que la pareja sea única
+/// sin importar quién dio like primero.
+model Match {
+  id         String   @id @default(uuid())
+  usuarioA   User     @relation("MatchUsuarioA", fields: [usuarioAId], references: [id], onDelete: Cascade)
+  usuarioAId String
+  usuarioB   User     @relation("MatchUsuarioB", fields: [usuarioBId], references: [id], onDelete: Cascade)
+  usuarioBId String
+  createdAt  DateTime @default(now())
+
+  @@unique([usuarioAId, usuarioBId])
+  @@map("matches")
 }
